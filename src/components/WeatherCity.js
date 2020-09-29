@@ -1,4 +1,4 @@
-import { Box, Grid, LinearProgress, Typography, Button, makeStyles } from '@material-ui/core';
+import { Box, Grid, LinearProgress, Typography, Button, makeStyles, Paper } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
@@ -95,7 +95,7 @@ export default function TabPanel(props) {
     }
 
     return (
-        <div className={classes.root}
+        <Paper className={classes.root}
             role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
@@ -129,12 +129,17 @@ export default function TabPanel(props) {
                             </Grid>
 
                         </Grid>
-                        <Line className={classes.lineStyle} data={createData} />
+                        <div className={classes.lineStyle}>
+
+                            <Line data={createData} />
+
+                        </div>
+
                     </div> : null}
 
                 </Box>
             )}
-        </div>
+        </Paper>
     );
 }
 
@@ -143,7 +148,6 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "WhiteSmoke",
         width: "97%",
         margin: "auto",
-        border: "2px solid black",
         padding: "35px"
     },
     buttonStyle: {
@@ -151,6 +155,11 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '0 3px 10px 3px rgb(179, 179, 179)',
     },
     rightJustifyStyle: {
-       textAlign: 'right',
-    },    
+        textAlign: 'right',
+    },
+    lineStyle: {
+        width: "50%",
+        margin: "auto"
+
+    }
 }));
