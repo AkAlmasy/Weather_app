@@ -1,60 +1,51 @@
-import { Box, Grid, LinearProgress, Typography, Button, makeStyles, Paper } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+
+import { Box, Grid, LinearProgress, Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 import { Line } from 'react-chartjs-2';
+import { motion } from "framer-motion";
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+
+import { CurrentCitiesContext } from '../Context/CurrentCitiesContext';
+import { WeatherDataContext } from '../Context/WeatherDataContext';
+
+import '../styles/WeatherCity.css';
 
 export default function TabPanel(props) {
     const { children, value, index, cityName, ...other } = props;
-    const [cityWeather, setCityWeather] = useState({ list: [] });
-    const [weatherRequested, setWeatherRequested] = useState(false);
+
+    const [cityWeather, setCityWeather] = useState({});
     const [hasWeather, setHasWeather] = useState(false);
     const [comError, setComError] = useState(false);
-    const [humidity, setHumidity] = useState(0);
-    const [pressure, setPressure] = useState(0);
-    const [windSpeed, setWindSpeed] = useState(0);
-    const [todayTemp, setTodayTemp] = useState(0);
-    const API_KEY = "e6b99c711faae3f6fc79f80d4c370664";
+
+
     const classes = useStyles();
 
+    const [uCities] = useContext(CurrentCitiesContext);
+    const [cityData] = useContext(WeatherDataContext);
+
+
     useEffect(() => {
-        if (!hasWeather && !weatherRequested && !comError) {
-            //request data
-            let url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=metric`;
-            fetch(url).then(res => {
-                if (res.ok) {
-                    res.json().then(data => {
-                        console.log(data);
-                        setHasWeather(true);
-                        setCityWeather(data);
-                    });
-                } else {
-                    setComError(true);
-                    console.log("HERE");
-                }
-                //console.log(res)
-            }).catch(err => { setComError(true); console.error(err); console.log("There"); });
-        }
+        let newCity = uCities.includes(cityName);
+        if (newCity) setHasWeather(true);
+        cityData.forEach(function (city) {
+            if (city.cityName === cityName) {
+                setCityWeather(city);
+            }
+        });
     }, []);
 
+    /*     function searchCurrentCity() {
+        } */
 
     function createData() {
+        //searchCurrentCity();
         let data = [];
         let label = [];
         try {
-            if (hasWeather && !weatherRequested) {
-                cityWeather.list.map(
-                    (dataItem, index) => {
-                        if (index % 2 === 0) {
-                            data.push(dataItem.main.temp);
-                            label.push(dataItem.dt_txt.split(" "));
-                            if (index === 0) {
-                                setTodayTemp(dataItem.main.temp);
-                                setHumidity(dataItem.main.humidity);
-                                setPressure(dataItem.main.pressure);
-                                setWindSpeed(dataItem.wind.speed);
-                            }
-                        }
-                    }
-                );
+            if (hasWeather) {
+                label = cityWeather.dtText;
+                data = cityWeather.foreCastTemp;
+
                 return {
                     labels: [...label],
                     datasets: [
@@ -62,13 +53,13 @@ export default function TabPanel(props) {
                             label: `${cityName}'s weather forcast`,
                             fill: true,
                             lineTension: 0.2,
-                            backgroundColor: 'rgba(75,192,192,0.4)',
-                            borderColor: 'rgba(75,192,192,1)',
+                            backgroundColor: 'rgba(63,81,181,0.4)',
+                            borderColor: 'rgba(63,81,181,0.7)',
                             borderCapStyle: 'butt',
                             borderDash: [],
                             borderDashOffset: 0.0,
                             borderJoinStyle: 'miter',
-                            pointBorderColor: 'rgba(75,192,192,1)',
+                            pointBorderColor: 'rgba(63,81,181,1)',
                             pointBackgroundColor: '#fff',
                             pointBorderWidth: 5,
                             pointHoverRadius: 10,
@@ -95,71 +86,93 @@ export default function TabPanel(props) {
     }
 
     return (
-        <Paper className={classes.root}
+        <div className={classes.root}
             role="tabpanel"
-            hidden={value !== index}
+            hidden={value !== cityName}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && (
+            {value === cityName && (
                 <Box p={3}>
-                    {comError ? <div>Communicatin error. Refresh page!</div> : null}
-                    {(weatherRequested && !comError) ? <LinearProgress />
-                        : null}
                     {hasWeather ? <div>
                         <Grid container spacing={1}>
-                            <Grid item xs={6} >
-                                <h2>{cityName}</h2>
+                            <Grid item xs={1} ></Grid>
+                            <Grid item xs={10}  >
+                                <motion.h1 className="title" animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.75 }}>
+                                    {cityName}
+                                </motion.h1>
                             </Grid>
-                            <Grid item xs={6} className={classes.rightJustifyStyle} >
-                                <Button className={classes.buttonStyle} onClick={() => props.removeCity(cityName)}>Remove Forecast !</Button>
-                            </Grid>
-                            <Grid item xs={3} >
-                                Todays temperature: <b> {todayTemp} C </b>
-                            </Grid>
-                            <Grid item xs={3} >
-                                Humidity: <b> {humidity} % </b>
-                            </Grid>
-                            <Grid item xs={3}>
-                                Pressure: <b> {pressure} mbar </b>
-                            </Grid>
-                            <Grid item xs={3}>
-                                Windspeed: <b> {windSpeed} m/s </b>
+                            <Grid item xs={1} >
+                                <motion.div className="removeButton" animate={{ opacity: 1, scale: [1, 2, 1], }} initial={{ opacity: 0 }} >
+                                    <Button onClick={() => props.removeCity(cityName)}> <DeleteForeverIcon fontSize="large" /> </Button>
+                                </motion.div>
                             </Grid>
 
                         </Grid>
-                        <div className={classes.lineStyle}>
-
-                            <Line data={createData} />
-
-                        </div>
-
-                    </div> : null}
+                        <Grid container spacing={1}>
+                            <Grid item xs={12} >
+                                <motion.div animate={{ x: 0, opacity: 1 }} initial={{ x: '-100vw', opacity: 0 }} transition={{ delay: 0.2, duration: 0.75 }} >
+                                    <TableContainer component={Paper} className={classes.table}>
+                                        <Table aria-label="simple table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>City</TableCell>
+                                                    <TableCell align="right">Current Temperature</TableCell>
+                                                    <TableCell align="right">Humidity</TableCell>
+                                                    <TableCell align="right">Pressure</TableCell>
+                                                    <TableCell align="right">Windspeed</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                <TableRow key={cityName}>
+                                                    <TableCell component="th" scope="row"><b>{cityName}</b></TableCell>
+                                                    <TableCell align="right"><b> {cityWeather.currentTemp} C </b></TableCell>
+                                                    <TableCell align="right"><b> {cityWeather.humidity} % </b></TableCell>
+                                                    <TableCell align="right"><b> {cityWeather.pressure} mbar </b></TableCell>
+                                                    <TableCell align="right"><b> {cityWeather.windSpeed} m/s </b></TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </motion.div>
+                            </Grid>
+                            <Grid item xs={12} className={classes.line}>
+                                <motion.div animate={{ x: 0, opacity: 1 }} initial={{ x: '100vw', opacity: 0 }} transition={{ delay: 0.2, duration: 0.75 }} >
+                                    <Line data={createData} />
+                                </motion.div>
+                            </Grid>
+                        </Grid>
+                    </div> :
+                        <h1>City not found ! </h1>
+                    }
 
                 </Box>
-            )}
-        </Paper>
+            )
+            }
+        </div >
     );
 }
 
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: "WhiteSmoke",
-        width: "97%",
         margin: "auto",
         padding: "35px"
     },
-    buttonStyle: {
-        background: 'linear-gradient(45deg, #6bfcfe 30%, #6b7ffe 90%)',
-        boxShadow: '0 3px 10px 3px rgb(179, 179, 179)',
-    },
     rightJustifyStyle: {
         textAlign: 'right',
+        marginBottom: "50px",
     },
-    lineStyle: {
-        width: "50%",
-        margin: "auto"
-
-    }
+    table: {
+        minWidth: 500,
+        maxWidth: 1000,
+        fontWeight: "bold",
+        margin: "auto",
+    },
+    line: {
+        minWidth: 500,
+        maxWidth: 1500,
+        margin: "auto",
+    },
 }));
