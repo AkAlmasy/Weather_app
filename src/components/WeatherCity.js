@@ -11,7 +11,7 @@ import { WeatherDataContext } from '../Context/WeatherDataContext';
 import '../styles/WeatherCity.css';
 
 export default function TabPanel(props) {
-    const { children, value, index, cityName, ...other } = props;
+    const { children, value, index, cityName, removeCity } = props;
 
     const [cityWeather, setCityWeather] = useState({});
     const [hasWeather, setHasWeather] = useState(false);
@@ -25,8 +25,7 @@ export default function TabPanel(props) {
 
 
     useEffect(() => {
-        let newCity = uCities.includes(cityName);
-        if (newCity) setHasWeather(true);
+        if (uCities.includes(cityName)) setHasWeather(true);
         cityData.forEach(function (city) {
             if (city.cityName === cityName) {
                 setCityWeather(city);
@@ -91,7 +90,7 @@ export default function TabPanel(props) {
             hidden={value !== cityName}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
-            {...other}
+
         >
             {value === cityName && (
                 <Box p={3}>
@@ -105,7 +104,7 @@ export default function TabPanel(props) {
                             </Grid>
                             <Grid item xs={1} >
                                 <motion.div className="removeButton" animate={{ opacity: 1, scale: [1, 2, 1], }} initial={{ opacity: 0 }} >
-                                    <Button onClick={() => props.removeCity(cityName)}> <DeleteForeverIcon fontSize="large" /> </Button>
+                                    <Button onClick={() => removeCity(cityName)}> <DeleteForeverIcon fontSize="large" /> </Button>
                                 </motion.div>
                             </Grid>
 
@@ -156,7 +155,7 @@ export default function TabPanel(props) {
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        backgroundColor: "WhiteSmoke",
+        backgroundColor: "#E0E0E0",
         margin: "auto",
         padding: "35px"
     },

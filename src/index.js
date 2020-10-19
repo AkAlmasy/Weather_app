@@ -3,16 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { WeatherDataProvider } from './Context/WeatherDataContext';
 import { AuthDataProvider } from './Context/AuthContext';
 
 ReactDOM.render(
   <React.StrictMode>
-      <WeatherDataProvider>
         <AuthDataProvider>
           <App />
         </AuthDataProvider>
-      </WeatherDataProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

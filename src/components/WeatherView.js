@@ -15,6 +15,7 @@ export default function WeatherView(props) {
     const [value, setValue] = useState("home");
     const [openNewCityDialog, setOpenNewCityDialog] = useState(false);
     const [comError, setComError] = useState(false);
+
     const API_KEY = "e6b99c711faae3f6fc79f80d4c370664";
 
     const classes = useStyles();
@@ -72,6 +73,7 @@ export default function WeatherView(props) {
                         setOpenNewCityDialog(false);
                         setUCities(prevCities => [...prevCities, city]);
                         appendToLocalStorage(city);
+                        setValue(city);
                     });
                 } else {
                     setComError(true);
@@ -102,21 +104,21 @@ export default function WeatherView(props) {
     return (
         <div className={classes.root}>
             <AppBar position="static">
-                <Tabs className={classes.tabStyle} value={value} onChange={handleChange} aria-label="simple tabs example" variant="scrollable"
+                <StyledTabs className={classes.tabStyle} value={value} onChange={handleChange} aria-label="simple tabs example" variant="scrollable"
                         scrollButtons="auto">
-                    <StyledTab key="CommandCentreTab" label="Command Centre" value="home" />
+                    <StyledTab key="CommandCentreTab" label="Command Center" value="home" />
                     {uCities.map((city, index) =>
                         <StyledTab key={`${city}-${index}`} label={city} value={city} />
                     )}
-                    <Tab key="add_new_city_tab" label="+" value="+" />
-                </Tabs>
+                    <StyledTab key="add_new_city_tab" label="+" value="+" />
+                </StyledTabs>
             </AppBar>
             {value === "home" ?
-                <CommandCentre valueChange={valueChange}/> :
+                <CommandCentre valueChange={valueChange} setNewCityDialog={setOpenNewCityDialog} removeCity={handleRemoveCity} /> :
                 uCities.map((city, index) =>
                     <TabPanel key={`tabpanel-${city}-${index}`} value={value} index={index} cityName={city} removeCity={handleRemoveCity} />
                 )}
-            <NewCityDialog open={openNewCityDialog} cancelAction={()=> setOpenNewCityDialog(false)} okAction={handleAddCity} />
+            <NewCityDialog open={openNewCityDialog} cancelAction={()=> setOpenNewCityDialog(false)} okAction={handleAddCity} valueChange={valueChange}/>
         </div>
     );
 }
@@ -132,8 +134,20 @@ let StyledTab = withStyles((theme) => ({
     selected: {
         fontWeight: "bold",
     },
-
 }))((props => <Tab {...props} />));
+
+const StyledTabs = withStyles({
+    indicator: {
+      display: 'flex',
+      justifyContent: 'center',
+      backgroundColor: 'transparent',
+      '& > span': {
+        maxWidth: 200,
+        width: '100%',
+        backgroundColor: 'gold',
+      },
+    },
+  })((props) => <Tabs {...props} TabIndicatorProps={{ children: <span /> }} />);
 
 const useStyles = makeStyles((theme) => ({
     root: {

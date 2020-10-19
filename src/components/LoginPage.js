@@ -30,8 +30,8 @@ export default function LoginPage(props) {
             localStorage.setItem(uName + "Data", "");
             setAuth({ authenticated: true, uName: uName });
         } else if (localStorage.getItem(uName) === pwd && uName !== null && uName !== "" && pwd !== "" && pwd !== null) {
+            if (localStorage.getItem(uName + "Data") !== "") {
             let userCities = localStorage.getItem(uName + "Data").split(",");
-            if (userCities !== "") {
                 setCities([...cities, ...userCities]);
                 setUCities([...uCities, ...userCities]);
                 userCities.forEach(function (city) {
@@ -52,10 +52,11 @@ export default function LoginPage(props) {
             fetch(url).then(res => {
                 if (res.ok) {
                     res.json().then(data => {
+                        console.log(data);
                         data.list.map((dataItem, index) => {
-                            if (index % 4 === 0) {
+                            if (index % 1 === 0) {
                                 ForeCastTempData.push(dataItem.main.temp);
-                                dtText.push(dataItem.dt_txt);
+                                    dtText.push(dataItem.dt_txt);
                             }
                         });
                         setCityData(prevCityData => [...prevCityData, {

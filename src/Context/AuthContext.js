@@ -6,6 +6,7 @@ export const AuthDataProvider = props => {
     const [auth, setAuth] = useState({
         authenticated: false,
         uName: "",
+        hasWeather: false,
     });
 
     return (
