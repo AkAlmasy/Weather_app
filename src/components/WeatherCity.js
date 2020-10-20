@@ -11,12 +11,10 @@ import { WeatherDataContext } from '../Context/WeatherDataContext';
 import '../styles/WeatherCity.css';
 
 export default function TabPanel(props) {
-    const { children, value, index, cityName, removeCity } = props;
+    const { value, index, cityName, removeCity } = props;
 
     const [cityWeather, setCityWeather] = useState({});
     const [hasWeather, setHasWeather] = useState(false);
-    const [comError, setComError] = useState(false);
-
 
     const classes = useStyles();
 
@@ -33,55 +31,39 @@ export default function TabPanel(props) {
         });
     }, []);
 
-    /*     function searchCurrentCity() {
-        } */
 
     function createData() {
-        //searchCurrentCity();
-        let data = [];
-        let label = [];
-        try {
-            if (hasWeather) {
-                label = cityWeather.dtText;
-                data = cityWeather.foreCastTemp;
-
-                return {
-                    labels: [...label],
-                    datasets: [
-                        {
-                            label: `${cityName}'s weather forcast`,
-                            fill: true,
-                            lineTension: 0.2,
-                            backgroundColor: 'rgba(63,81,181,0.4)',
-                            borderColor: 'rgba(63,81,181,0.7)',
-                            borderCapStyle: 'butt',
-                            borderDash: [],
-                            borderDashOffset: 0.0,
-                            borderJoinStyle: 'miter',
-                            pointBorderColor: 'rgba(63,81,181,1)',
-                            pointBackgroundColor: '#fff',
-                            pointBorderWidth: 5,
-                            pointHoverRadius: 10,
-                            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-                            pointHoverBorderColor: 'rgba(120,120,120,1)',
-                            pointHoverBorderWidth: 2,
-                            pointRadius: 1,
-                            pointHitRadius: 10,
-                            data: [...data]
-                        }
-                    ]
-                };
-
-            } else {
-                return {};
-            }
-
-        } catch (error) {
-            console.error(error);
-            setComError(true);
+        console.log(cityWeather.dtText);
+        if (hasWeather) {
+            return {
+                labels: [...cityWeather.dtText],
+                datasets: [
+                    {
+                        label: `${cityName}'s weather forcast`,
+                        fill: true,
+                        lineTension: 0.2,
+                        backgroundColor: 'rgba(63,81,181,0.4)',
+                        borderColor: 'rgba(63,81,181,0.7)',
+                        borderCapStyle: 'butt',
+                        borderDash: [],
+                        borderDashOffset: 0.0,
+                        borderJoinStyle: 'miter',
+                        pointBorderColor: 'rgba(63,81,181,1)',
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 5,
+                        pointHoverRadius: 10,
+                        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+                        pointHoverBorderColor: 'rgba(120,120,120,1)',
+                        pointHoverBorderWidth: 2,
+                        pointRadius: 1,
+                        pointHitRadius: 10,
+                        data: [...cityWeather.foreCastTemp]
+                    }
+                ]
+            };
+        } else {
             return {};
         }
-
     }
 
     return (
@@ -90,7 +72,6 @@ export default function TabPanel(props) {
             hidden={value !== cityName}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
-
         >
             {value === cityName && (
                 <Box p={3}>
@@ -145,7 +126,6 @@ export default function TabPanel(props) {
                     </div> :
                         <h1>City not found ! </h1>
                     }
-
                 </Box>
             )
             }

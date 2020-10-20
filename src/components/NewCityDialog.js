@@ -16,7 +16,6 @@ export default function NewCityDialog(props) {
                 <DialogContentText>
                     Name the new city you wish to see the weather in.
           </DialogContentText>
-
                 <TextField
                     autoFocus
                     margin="dense"

@@ -30,6 +30,7 @@ export default function WeatherView(props) {
         setValue(newValue);
     };
 
+    
     function valueChange (newValue) {
         setValue(newValue);
     };
@@ -71,9 +72,9 @@ export default function WeatherView(props) {
                             ID: data.city.id,
                         }]);
                         setOpenNewCityDialog(false);
-                        setUCities(prevCities => [...prevCities, city]);
-                        appendToLocalStorage(city);
-                        setValue(city);
+                        setUCities(prevCities => [...prevCities, data.city.name]);
+                        appendToLocalStorage(data.city.name);
+                        setValue(data.city.name);
                     });
                 } else {
                     setComError(true);
@@ -96,7 +97,6 @@ export default function WeatherView(props) {
                 cityData.splice(i,1);
             }
         }
-
         setValue("home");
     }
 
@@ -127,7 +127,7 @@ export default function WeatherView(props) {
 
 let StyledTab = withStyles((theme) => ({
     root: {
-        fontSize: "18px",
+        fontSize: "16px",
         fontFamily: "Arial, Helvetica, sans-serif",
         textTransform: "initial",
     },
